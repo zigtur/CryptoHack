@@ -41,7 +41,18 @@ The algorithm for the addition of two points $P+Q$:
 - 1. If $P=O$, then $P+Q=Q$
 - 2. Otherwise, if $Q=O$, then $P+Q=P$
 - 3. Otherwise, say $P={x_1,y_1}$ and $Q={x_2,y_2}$
-  - 3.1. If $x_1=x_2$, and $y_1=-y_2$, then $P+Q=O$
-  - 3.2. Otherwise
+  - 1. If $x_1=x_2$, and $y_1=-y_2$, then $P+Q=O$
+  - 2. Otherwise:
+    - 1.1 if $P \neq Q: \lambda = (y_2 - y_1)/(x_2 - x_1)$
+    - 1.2 if $P = Q: \lambda = (3x_1^2 + a) / 2y_1$
+    - 2. $x_3 = \lambda^2 - x_1 - x_2$, and $y_3 = \lambda (x_1-x_3) - y_1$
+    - 3. $P+Q = (x_3, y_3)$
+
+Remark: As we work in a finite field, calculations are done $mod\ p$. We do not "divide" by an integer, we instead multiply by the modular inverse of a number. (e.g. $1/5 = 9\ mod\ 11$)
+
+Working with $E: Y^2 = X^3 + 497 X + 1768,\ p: 9739$
+
+
+
 
 
