@@ -137,4 +137,30 @@ fn main() {
     println!("({},{}) + ({},{}) = ({},{})", pointA.x, pointA.y, pointB.x, pointB.y, pointC.x, pointC.y);
     println!("({},{}) + ({},{}) = ({},{})", pointA.x, pointA.y, pointA.x, pointA.y, pointD.x, pointD.y);
 
+    // Exercise solution
+    let P = Point {
+        x: 493,
+        y: 5564,
+        field: 9739,
+        curve: ellipticCurve,
+    };
+
+    let Q = Point {
+        x: 1539,
+        y: 4742,
+        field: 9739,
+        curve: ellipticCurve,
+    };
+
+    let R = Point {
+        x: 4403,
+        y: 5202,
+        field: 9739,
+        curve: ellipticCurve,
+    };
+
+    let  pointResult = P.add(&P.add(&Q.add(&R)));
+    pointResult.verificate_elliptic_curve();
+    println!("P + P + Q + R = ({},{})", pointResult.x, pointResult.y);
+
 }
