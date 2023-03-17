@@ -53,6 +53,23 @@ Remark: As we work in a finite field, calculations are done $mod\ p$. We do not 
 Working with $E: Y^2 = X^3 + 497 X + 1768,\ p: 9739$
 
 
+## Scalar Multiplication
+Scalar multiplication of two points is defined by repeated addition: $3P = P+P+P$
+
+The algorithm for efficiently calculate scalar multiplication of a point on an elliptic curve:
+- **Double and Add algorithm for the scalar multiplication of point $P$ by $n$**
+- Input: $P \in E(\mathbb{F}_p)$ and an integer $n > 0$
+- 1. Set $Q=P$ and $R=O$
+- 2. Loop while $n > 0$:
+  - 2.1. If $n \equiv 1 \ mod \ 2$, set $R = R+Q$
+  - 2.2. Set $Q = 2Q$ and $n=[n/2]$
+  - 2.3. If $n > 0$, continue with loop at step 2
+- 3. Return the point $R$, which equals $nP$
+
+*Note: This is not the most efficient algorithm, there are many interesting ways to improve this calculation up, but this will be sufficient for our work*
+
+Working with $E: Y^2 = X^3 + 497 X + 1768,\ p: 9739$
+
 
 
 
