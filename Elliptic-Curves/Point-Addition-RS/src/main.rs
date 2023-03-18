@@ -1,6 +1,7 @@
 use std::ops::Add;
 use std::fmt;
 
+#[derive(Copy, Clone, PartialEq)]
 struct Point {
     x: i64,
     y: i64,
@@ -29,13 +30,20 @@ impl fmt::Display for EllipticCurve {
     }
 }
 
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Use `self.number` to refer to each positional data point.
+        write!(f, "({}, {}) % {}", self.x, self.y, self.field)
+    }
+}
+
 
 impl Addition for Point {
 
     fn add(&self, secondPoint: &Self) -> Self {
         assert!(self.curve == secondPoint.curve);
         assert!(self.field == secondPoint.field);
-        if (self.x == 0 && self.y == 0) {
+        if self.x == 0 && self.y == 0 {
             return Self {
                 x: secondPoint.x,
                 y: secondPoint.y,
@@ -43,7 +51,7 @@ impl Addition for Point {
                 curve: secondPoint.curve,
             };
         }
-        else if (secondPoint.x == 0 && secondPoint.y == 0) {
+        else if secondPoint.x == 0 && secondPoint.y == 0 {
             return Self {
                 x: self.x,
                 y: self.y,
@@ -53,7 +61,7 @@ impl Addition for Point {
             
         }
         else {
-            if self.x == secondPoint.x && self.y == (0 - secondPoint.y) % secondPoint.field {
+            if self.x == secondPoint.x && self.y == (0 - secondPoint.y).rem_euclid(secondPoint.field) {
                 return Self {
                     x: self.curve.o,
                     y: self.curve.o,
@@ -64,12 +72,12 @@ impl Addition for Point {
             else {
                 let mut gamma: i64 = 0;
                 if self.x != secondPoint.x || self.y != secondPoint.y {
-                    let y_calculation = (secondPoint.y - self.y) % self.field;
-                    let x_calculation = (secondPoint.x - self.x) % self.field;
-                    gamma =  (y_calculation * mod_inv(x_calculation, self.field)) % self.field;
+                    let y_calculation = (secondPoint.y - self.y).rem_euclid(self.field);
+                    let x_calculation = (secondPoint.x - self.x).rem_euclid(self.field);
+                    gamma =  (y_calculation * mod_inv(x_calculation, self.field)).rem_euclid(self.field);
                 }
                 else {// if (self.x == secondPoint.x && self.y == secondPoint.y) {
-                    gamma =  ((3 * self.x.pow(2) + self.curve.a) * mod_inv(2*self.y, self.field)) % self.field;
+                    gamma =  ((3 * self.x.pow(2) + self.curve.a) * mod_inv(2*self.y, self.field)).rem_euclid(self.field);
                 }
                 let x_3 = (gamma.pow(2) - self.x - secondPoint.x).rem_euclid(self.field); // will make a positive modulo
                 let y_3 = (gamma * (self.x - x_3) - self.y).rem_euclid(self.field); // will make a positive modulo
@@ -105,7 +113,7 @@ fn mod_inv(a: i64, module: i64) -> i64 {
       xy.0 += module;
     }
     xy.0
-  }
+}
 
 fn main() {
     let ellipticCurve = EllipticCurve {
@@ -162,5 +170,110 @@ fn main() {
     let  pointResult = P.add(&P.add(&Q.add(&R)));
     pointResult.verificate_elliptic_curve();
     println!("P + P + Q + R = ({},{})", pointResult.x, pointResult.y);
+
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_infinity_point_addition() {
+        let ellipticCurve = EllipticCurve {
+            a: 497,
+            b: 1768,
+            o: 0,
+        };
+        let P = Point {
+            x: 0,
+            y: 0,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        let Q = Point {
+            x: 493,
+            y: 5564,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        Q.verificate_elliptic_curve();
+        let R1 = Q.add(&P);
+        let R2 = P.add(&Q);
+        R1.verificate_elliptic_curve();
+        R2.verificate_elliptic_curve();
+        assert!(R1 == R2);
+        assert!(R1 == Q);
+    }
+
+    #[test]
+    fn test_y1_equals_minus_y2() {
+        let ellipticCurve = EllipticCurve {
+            a: 497,
+            b: 1768,
+            o: 0,
+        };
+        let P = Point {
+            x: 493,
+            y: 5564,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        let Q = Point {
+            x: 493,
+            y: (0 - P.y).rem_euclid(P.field),
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        let O = Point {
+            x: 0,
+            y: 0,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        P.verificate_elliptic_curve();
+        Q.verificate_elliptic_curve();
+        let R1 = P.add(&Q);
+        println!("R1 = {}", R1);
+        assert!(R1 == O);
+    }
+
+    #[test]
+    fn test_add_p_to_p2() {
+        let ellipticCurve = EllipticCurve {
+            a: 497,
+            b: 1768,
+            o: 0,
+        };
+        let P = Point {
+            x: 493,
+            y: 5564,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        P.verificate_elliptic_curve();
+        let R = P.add(&P);
+        R.verificate_elliptic_curve();
+        println!("R = {}", R);
+    }
+
+    #[test]
+    fn test_add_p_to_p() {
+        let ellipticCurve = EllipticCurve {
+            a: 497,
+            b: 1768,
+            o: 0,
+        };
+        let P = Point {
+            x: 493,
+            y: 5564,
+            field: 9739,
+            curve: ellipticCurve,
+        };
+        P.verificate_elliptic_curve();
+        let R = P.add(&P);
+        R.verificate_elliptic_curve();
+        println!("R = {}", R);
+    }
 
 }

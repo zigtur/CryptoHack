@@ -1,4 +1,5 @@
 use std::fmt;
+use sha1::{Sha1, Digest};
 
 #[derive(Copy, Clone, PartialEq)]
 struct Point {
@@ -143,43 +144,24 @@ fn main() {
         b: 1768,
         o: 0,
     };
-    let pointX = Point {
-        x: 5323,
-        y: 5438,
+    let pointG = Point {
+        x: 1804,
+        y: 5368,
         field: 9739,
         curve: ellipticCurve,
     };
 
-    let pointResult = pointX.mul(1337);
-    pointResult.verificate_elliptic_curve();
-    println!("({},{})", pointResult.x, pointResult.y);
-
-    // Challenge
-    let pointP = Point {
-        x: 2339,
-        y: 2213,
+    let pointQa = Point {
+        x: 815,
+        y: 3190,
         field: 9739,
         curve: ellipticCurve,
     };
 
-    pointP.verificate_elliptic_curve();
-    let pointResult = pointP.mul(7863);
-
-    println!("Result = {}", pointResult);
-
-    /*
-    let pointQ = pointP.mul(3);
-    let point3P = pointP.add(&(pointP.add(&pointP)));
-    let point2P = pointP.add(&pointP);
-    pointQ.verificate_elliptic_curve();
-    println!("2P : ({},{})", point2P.x, point2P.y);
-    
-    point3P.verificate_elliptic_curve();
-    println!("pointQ : ({},{}) with field {} and elliptic curve Y^2 = X^3 + {} X + {}", pointQ.x, pointQ.y, pointQ.field, pointQ.curve.a, pointQ.curve.b);
-    println!("Y^2 = {}", (pointQ.y * pointQ.y) % pointQ.field);
-    println!("other part = {}", (pointQ.x.pow(3) + pointQ.curve.a * pointQ.x + pointQ.curve.b) % pointQ.field);
-
-    println!("point3P : ({},{}) with field {} and elliptic curve Y^2 = X^3 + {} X + {}", point3P.x, point3P.y, point3P.field, point3P.curve.a, point3P.curve.b);
-    println!("Y^2 = {}", (point3P.y * point3P.y) % point3P.field);
-    println!("other part = {}", (point3P.x.pow(3) + point3P.curve.a * point3P.x + point3P.curve.b) % point3P.field);*/
+    let pointResult = pointQa.mul(1829);
+    // SHA-1
+    let mut hasher = Sha1::new();
+    hasher.update(pointResult.x.to_string());
+    let result = hasher.finalize();
+    println!("SHA-1 = {}", format!("{:x}", result));
 }

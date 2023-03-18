@@ -71,5 +71,40 @@ The algorithm for efficiently calculate scalar multiplication of a point on an e
 Working with $E: Y^2 = X^3 + 497 X + 1768,\ p: 9739$
 
 
+## Curves and Logs
+The Ellipitic Curve Discrete Logarithm Problem (ECDLP) is the problem of finding an integer $n$ such that $Q = nP$. Scalar multiplication of a point in $E(\mathbb{F}_p)$ seems to be a hard problem to undo. The most efficient algorithm runs at $p^{1/2}$ time.
+
+That makes it a great candidate for a trapdoor function.
+
+### Scenario
+Alice and Bob want to create a shared secret so they can start encrypting their messages with some symmetric cryptographic protocol. They don't trust their connection, so they need a way to create a secret others can't replicate.
+
+First, they agree on a curve $E$, a prime $p$ and a generator point $G$.
+
+*Note: it is really important that the order of $G$ is prime. It is recommended to use a preconstructed curve where a client is given the curve, the prime and the generator to use. Constructing **secure curves** is complicated.*
+
+### Protocol
+- Alice generates a secret random integer $n_a$ and calculates $Q_a = n_a G$
+- Bob generates a secret random integer $n_b$ and calculates $Q_b = n_b G$
+- Alice sends $Q_a$ to Bob. Bob sends $Q_b$ to Alice. Attacker Eve is unable to calculate $n_a$ or $n_b$ in reasonable time.
+- Alice then calculates $S = n_a Q_b$, Bob calculates $S = n_b Q_a$
+- Due to scalar multiplication associativity: $S = n_a Q_b = n_b Q_a$
+- Alice and Bob can use $S$ as their shared secret.
+
+
+```mermaid
+sequenceDiagram
+  participant Alice
+  participant Bob
+
+  Alice ->> Alice: Generates n_a
+  Bob ->> Bob: Generates n_b
+  Alice ->> Alice: Q_a = n_a.G
+  Bob ->> Bob: Q_b = n_b.G
+  Alice ->> Bob: sends Q_a
+  Bob ->> Alice: sends Q_b
+  Alice ->> Alice: S = Q_b.n_a
+  Bob ->> Bob: S = Q_a.n_b
+```
 
 
