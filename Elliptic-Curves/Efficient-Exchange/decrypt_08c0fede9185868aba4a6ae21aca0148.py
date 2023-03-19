@@ -25,7 +25,7 @@ def decrypt_flag(shared_secret: int, iv: str, ciphertext: str):
         return plaintext.decode('ascii')
 
 
-shared_secret = ?
+shared_secret = '1791'
 iv = 'cd9da9f1c60925922377ea952afc212c'
 ciphertext = 'febcbe3a3414a730b125931dccf912d2239f3e969c4334d95ed0ec86f6449ad8'
 

@@ -108,3 +108,15 @@ sequenceDiagram
 ```
 
 
+## Efficient Exchange
+Using one bit, it is possible to indicate the value of a point. For example, if the bit is set, then the biggest y should be taken.
+
+The two possible values of y are linked. $y_A = - y_B$
+
+
+
+# Parameter Choice
+## Smooth Criminal
+
+
+
