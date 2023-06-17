@@ -20,5 +20,7 @@ First, an interesting property of quadratic residues:
 That means that calculating $a^{(p-1)/2}\ mod\ p$ is enough to determine if $a$ is a quadratic residue.
 
 
+## Modular Square Root
+
 
 

@@ -117,6 +117,10 @@ The two possible values of y are linked. $y_A = - y_B$
 
 # Parameter Choice
 ## Smooth Criminal
+Here, the generator is poorly chosen (it is smooth).
+
+Discrete log can be used to compute any point.
+
 
 
 
